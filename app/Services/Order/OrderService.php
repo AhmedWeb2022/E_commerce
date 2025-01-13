@@ -2,11 +2,16 @@
 
 namespace App\Services\Order;
 
+use App\Traits\ApiResponseTrait;
 use App\Params\Order\OrderParam;
+use App\Http\Resources\Order\OrderResource;
+use App\Models\Order\Order;
 use App\Repositories\Order\OrderRepository;
 
 class OrderService
 {
+    use ApiResponseTrait;
+
     protected $orderParam;
     protected $orderRepository;
 
@@ -18,28 +23,59 @@ class OrderService
 
     public function getAll()
     {
-        return $this->orderRepository->getAll();
+        $response = $this->orderRepository->getAll();
+        if (!$response['status']) {
+            return $this->error($response['message']);
+        }
+        return $this->success(OrderResource::collection($response['data']), 'Orders retrieved successfully');
     }
 
-    public function findById($id)
+    public function findById(int $id)
     {
-        return $this->orderRepository->findById($id);
+        $response = $this->orderRepository->findById($id);
+        if (!$response['status']) {
+            return $this->error($response['message']);
+        }
+        return $this->success(new OrderResource($response['data']), $response['message']);
     }
 
     public function create(array $data)
     {
+        $data['total_amount'] = calculateTotalAmount($data);
         $orderParam = $this->orderParam->setParams($data);
-        return $this->orderRepository->create($orderParam->toArray());
+        $response = $this->orderRepository->create($orderParam->toArray());
+        $response['data']->products()->attach($data['product_id'], ['quantity' => $data['quantity'], 'price' => $data['price']]);
+
+        if (!$response['status']) {
+            return $this->error($response['message']);
+        }
+
+        return $this->success(new OrderResource($response['data']), $response['message']);
     }
 
-    public function update($id, array $data)
+    public function update(int $id, array $data)
     {
+        $data['total_amount'] = calculateTotalAmount($data);
         $orderParam = $this->orderParam->setParams($data);
-        return $this->orderRepository->update($id, $orderParam->toArray());
+        $response = $this->orderRepository->update($id, $orderParam->toArray());
+
+        $response['data']->products()->sync([$data['product_id'] => [
+            'quantity' => $data['quantity'],
+            'price' => $data['price'],
+        ]]);
+
+        if (!$response['status']) {
+            return $this->error($response['message']);
+        }
+        return $this->success(new OrderResource($response['data']), 'Order updated successfully');
     }
 
-    public function delete($id)
+    public function delete(int $id)
     {
-        return $this->orderRepository->delete($id);
+        $response = $this->orderRepository->delete($id);
+        if (!$response['status']) {
+            return $this->error($response['message']);
+        }
+        return $this->noContent($response['message'])->getData();
     }
 }

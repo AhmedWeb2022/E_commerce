@@ -68,7 +68,6 @@ class ProductService
         if (!$response['status']) {
             return $this->error($response['message']);
         }
-        // dd($this->noContent($response['message'])->getContent());
         return $this->noContent($response['message']);
     }
 }

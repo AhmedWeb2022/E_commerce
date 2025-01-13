@@ -18,7 +18,6 @@ class ProductParam
 
     public function setParams(array $data)
     {
-        // dd($data);
         $this->name = $data['name'] ?? null;
         $this->price = $data['price'] ?? 0;
         return $this;
@@ -26,7 +25,6 @@ class ProductParam
 
     public function toArray(): array
     {
-        // dd($this->name);
         return [
             'name' => $this->name,
             'price' => $this->price

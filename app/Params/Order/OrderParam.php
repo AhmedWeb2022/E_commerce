@@ -13,13 +13,15 @@ class OrderParam
     public function __construct(array $data = [])
     {
         $this->total_amount = $data['total_amount'] ?? null;
-        $this->status = $data['status'] ?? null;
+        $this->status = $data['status'] ?? 0;
     }
 
     public function setParams(array $data)
     {
         $this->total_amount = $data['total_amount'] ?? null;
-        $this->status = $data['status'] ?? null;
+        $this->status = $data['status'] ?? 0;
+
+        return $this;
     }
 
     public function toArray(): array

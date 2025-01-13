@@ -4,6 +4,9 @@ namespace App\Http\Controllers\Api\Product;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Api\Product\ShowProductDetailRequest;
+use App\Http\Requests\Api\Product\StoreProductRequest;
+use App\Http\Requests\Api\Product\UpdateProductRequest;
 use App\Services\Product\ProductService;
 
 class ProductController extends Controller
@@ -25,12 +28,12 @@ class ProductController extends Controller
         return $this->productService->findById($id);
     }
 
-    public function store(Request $request)
+    public function store(StoreProductRequest $request)
     {
         return $this->productService->create($request->all());
     }
 
-    public function update(Request $request, $id)
+    public function update(UpdateProductRequest $request, $id)
     {
         return $this->productService->update($id, $request->all());
     }

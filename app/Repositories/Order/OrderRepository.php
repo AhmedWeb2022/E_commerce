@@ -7,111 +7,134 @@ use App\Models\Order\Order;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use App\Interfaces\Repository\RepositoryInterface;
+use App\Traits\RepositoryResponseTrait;
 
-class OrderRepository  implements RepositoryInterface
+class OrderRepository implements RepositoryInterface
 {
+    use RepositoryResponseTrait;
+
     protected $order;
 
     public function __construct(Order $order)
     {
         $this->order = $order;
     }
-    public function getAll()
+
+    /**
+     * Retrieve all orders from the database.
+     *
+     * @return array<string, mixed> An associative array containing the status, message, and data of orders.
+     */
+    public function getAll(): array
     {
         try {
-            return Order::all();
+            $orders = $this->order->all();
+            return $this->successResponse($orders, 'Orders retrieved successfully');
         } catch (Exception $e) {
-            // Log the exception and rethrow or return an error message
             Log::error('Error retrieving all orders: ' . $e->getMessage());
-            return response()->json(['error' => 'Unable to retrieve orders'], 500);
+            return $this->errorResponse('Error retrieving all orders');
         }
     }
 
-    public function findById($id)
+    /**
+     * Find an order by ID.
+     *
+     * @param int $id
+     * @return array<string, mixed>
+     */
+    public function findById($id): array
     {
         try {
-            return Order::find($id);
+            $order = $this->order->find($id);
+
+            if (!$order) {
+                return $this->notFoundResponse('Order not found');
+            }
+
+            return $this->successResponse($order, 'Order retrieved successfully');
         } catch (Exception $e) {
             Log::error('Error finding order by ID: ' . $e->getMessage());
-            return null;
+            return $this->errorResponse('Error finding order');
         }
     }
 
-    public function create(array $data)
+    /**
+     * Create a new order.
+     *
+     * @param array $data
+     * @return array<string, mixed>
+     */
+    public function create(array $data): array
     {
-        DB::beginTransaction();  // Start the transaction
+        DB::beginTransaction();
 
         try {
-            // Create the order in the database
-            $order = Order::create($data);
-
-            // Commit the transaction if successful
+            $order = $this->order->create($data);
             DB::commit();
-
-            return $order;
+            return $this->successResponse($order, 'Order created successfully');
         } catch (Exception $e) {
-            // Rollback the transaction if anything goes wrong
             DB::rollBack();
-
-            // Log the error and return a meaningful response
             Log::error('Error creating order: ' . $e->getMessage());
-            return response()->json(['error' => 'Unable to create order'], 500);
+            return $this->errorResponse('Unable to create order');
         }
     }
 
-    public function update($id, array $data)
+    /**
+     * Update an order by ID.
+     *
+     * @param int $id
+     * @param array $data
+     * @return array<string, mixed>
+     */
+    public function update($id, array $data): array
     {
-        DB::beginTransaction();  // Start the transaction
+        DB::beginTransaction();
 
         try {
-            // Find the order
-            $order = $this->findById($id);
+            $order = $this->order->find($id);
+
             if (!$order) {
-                return response()->json(['error' => 'order not found'], 404);
+                return $this->notFoundResponse('Order not found');
             }
 
-            // Update the order with the provided data
             $order->update($data);
-
-            // Commit the transaction if successful
             DB::commit();
-
-            return $order;
+            return $this->successResponse($order, 'Order updated successfully');
         } catch (Exception $e) {
-            // Rollback the transaction if anything goes wrong
             DB::rollBack();
-
-            // Log the error and return a meaningful response
             Log::error('Error updating order: ' . $e->getMessage());
-            return response()->json(['error' => 'Unable to update order'], 500);
+            return $this->errorResponse('Unable to update order');
         }
     }
 
-    public function delete($id)
+    /**
+     * Delete an order by ID.
+     *
+     * @param int $id
+     * @return array<string, mixed>
+     */
+    public function delete($id): array
     {
-        DB::beginTransaction();  // Start the transaction
+        DB::beginTransaction();
 
         try {
-            // Find the order
-            $order = $this->findById($id);
+            $order = $this->order->find($id);
+
             if (!$order) {
-                return response()->json(['error' => 'order not found'], 404);
+                return $this->notFoundResponse('Order not found');
             }
 
-            // Delete the order
+            $orderProducts = $order->orderProducts;
+            foreach ($orderProducts as $orderProduct) {
+                $orderProduct->delete();
+            }
             $order->delete();
-
-            // Commit the transaction if successful
             DB::commit();
-
-            return response()->json(['message' => 'order deleted successfully'], 200);
+            return $this->successResponse(null, 'Order deleted successfully');
         } catch (Exception $e) {
-            // Rollback the transaction if anything goes wrong
             DB::rollBack();
-
-            // Log the error and return a meaningful response
             Log::error('Error deleting order: ' . $e->getMessage());
-            return response()->json(['error' => 'Unable to delete order'], 500);
+            return $this->errorResponse('Unable to delete order');
         }
     }
 }

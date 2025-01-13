@@ -7,9 +7,11 @@ use App\Models\Product\Product;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use App\Interfaces\Repository\RepositoryInterface;
+use App\Traits\RepositoryResponseTrait;
 
 class ProductRepository implements RepositoryInterface
 {
+    use RepositoryResponseTrait;
 
     protected $product;
 
@@ -17,151 +19,118 @@ class ProductRepository implements RepositoryInterface
     {
         $this->product = $product;
     }
-    public function getAll()
+
+    /**
+     * Retrieve all products from the database.
+     *
+     * @return array<string, mixed> An associative array containing the status, message, and data of products.
+     */
+    public function getAll(): array
     {
         try {
-            $products = Product::all();
-
-            return [
-                'status' => true,
-                'message' => 'Products retrieved successfully',
-                'data' => $products
-            ];
+            $products = $this->product->all();
+            return $this->successResponse($products, 'Products retrieved successfully');
         } catch (Exception $e) {
-            // Log the exception and rethrow or return an error message
             Log::error('Error retrieving all products: ' . $e->getMessage());
-            return [
-                'status' => false,
-                'message' => 'Error retrieving all products'
-            ];
+            return $this->errorResponse('Error retrieving all products');
         }
     }
 
-    public function findById($id)
+    /**
+     * Find a product by ID.
+     *
+     * @param int $id
+     * @return array<string, mixed>
+     */
+    public function findById($id): array
     {
         try {
-            $product = Product::find($id);
+            $product = $this->product->find($id);
+
             if (!$product) {
-                return [
-                    'status' => false,
-                    'message' => 'Product not found'
-                ];
+                return $this->notFoundResponse('Product not found');
             }
-            return [
-                'status' => true,
-                'message' => 'Product retrieved successfully',
-                'data' => $product
-            ];
+
+            return $this->successResponse($product, 'Product retrieved successfully');
         } catch (Exception $e) {
             Log::error('Error finding product by ID: ' . $e->getMessage());
-            return [
-                'status' => false,
-                'message' => 'Error finding product'
-            ];
+            return $this->errorResponse('Error finding product');
         }
     }
 
-    public function create(array $data)
+    /**
+     * Create a new product.
+     *
+     * @param array $data
+     * @return array<string, mixed>
+     */
+    public function create(array $data): array
     {
-        DB::beginTransaction();  // Start the transaction
+        DB::beginTransaction();
 
         try {
-            // Create the product in the database
-            $product = Product::create($data);
-
-            // Commit the transaction if successful
+            $product = $this->product->create($data);
             DB::commit();
-
-            return [
-                'status' => true,
-                'message' => 'Product created successfully',
-                'data' => $product
-            ];
+            return $this->successResponse($product, 'Product created successfully');
         } catch (Exception $e) {
-            // Rollback the transaction if anything goes wrong
             DB::rollBack();
-
-            // Log the error and return a meaningful response
             Log::error('Error creating product: ' . $e->getMessage());
-            return [
-                'status' => false,
-                'message' => 'Unable to create product'
-            ];
+            return $this->errorResponse('Unable to create product');
         }
     }
 
-    public function update($id, array $data)
+    /**
+     * Update a product by ID.
+     *
+     * @param int $id
+     * @param array $data
+     * @return array<string, mixed>
+     */
+    public function update($id, array $data): array
     {
-        DB::beginTransaction();  // Start the transaction
+        DB::beginTransaction();
 
         try {
-            // Find the product
-            $product = $this->findById($id)["data"];
+            $product = $this->product->find($id);
+
             if (!$product) {
-                return [
-                    'status' => false,
-                    'message' => 'Product not found'
-                ];
+                return $this->notFoundResponse('Product not found');
             }
 
-            // Update the product with the provided data
             $product->update($data);
-
-            // Commit the transaction if successful
             DB::commit();
-
-            return [
-                'status' => true,
-                'message' => 'Product updated successfully',
-                'data' => $product
-            ];
+            return $this->successResponse($product, 'Product updated successfully');
         } catch (Exception $e) {
-            // Rollback the transaction if anything goes wrong
             DB::rollBack();
-
-            // Log the error and return a meaningful response
             Log::error('Error updating product: ' . $e->getMessage());
-            return [
-                'status' => false,
-                'message' => 'Unable to update product'
-            ];
+            return $this->errorResponse('Unable to update product');
         }
     }
 
-    public function delete($id)
+    /**
+     * Delete a product by ID.
+     *
+     * @param int $id
+     * @return array<string, mixed>
+     */
+    public function delete($id): array
     {
-        DB::beginTransaction();  // Start the transaction
+        DB::beginTransaction();
 
         try {
-            // Find the product
-            $product = $this->findById($id)["data"];
+            $product = $this->product->find($id);
+
             if (!$product) {
-                return [
-                    'status' => false,
-                    'message' => 'Product not found'
-                ];
+                return $this->notFoundResponse('Product not found');
             }
 
-            // Delete the product
             $product->delete();
-
-            // Commit the transaction if successful
             DB::commit();
-
-            return [
-                'status' => true,
-                'message' => 'Product deleted successfully'
-            ];
+            return $this->successResponse(null, 'Product deleted successfully');
         } catch (Exception $e) {
-            // Rollback the transaction if anything goes wrong
             DB::rollBack();
-
-            // Log the error and return a meaningful response
             Log::error('Error deleting product: ' . $e->getMessage());
-            return [
-                'status' => false,
-                'message' => 'Unable to delete product'
-            ];
+            return $this->errorResponse('Unable to delete product');
         }
     }
 }
