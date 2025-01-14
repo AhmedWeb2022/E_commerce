@@ -44,7 +44,6 @@ class OrderService
         $data['total_amount'] = calculateTotalAmount($data);
         $orderParam = $this->orderParam->setParams($data);
         $response = $this->orderRepository->create($orderParam->toArray());
-        $response['data']->products()->attach($data['product_id'], ['quantity' => $data['quantity'], 'price' => $data['price']]);
 
         if (!$response['status']) {
             return $this->error($response['message']);
@@ -58,11 +57,6 @@ class OrderService
         $data['total_amount'] = calculateTotalAmount($data);
         $orderParam = $this->orderParam->setParams($data);
         $response = $this->orderRepository->update($id, $orderParam->toArray());
-
-        $response['data']->products()->sync([$data['product_id'] => [
-            'quantity' => $data['quantity'],
-            'price' => $data['price'],
-        ]]);
 
         if (!$response['status']) {
             return $this->error($response['message']);

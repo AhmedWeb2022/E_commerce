@@ -70,6 +70,7 @@ class OrderRepository implements RepositoryInterface
 
         try {
             $order = $this->order->create($data);
+            $order->products()->attach($data['product_id'], ['quantity' => $data['quantity'], 'price' => $data['price']]);
             DB::commit();
             return $this->successResponse($order, 'Order created successfully');
         } catch (Exception $e) {
@@ -93,11 +94,16 @@ class OrderRepository implements RepositoryInterface
         try {
             $order = $this->order->find($id);
 
+
             if (!$order) {
                 return $this->notFoundResponse('Order not found');
             }
 
             $order->update($data);
+            $order->products()->sync([$data['product_id'] => [
+                'quantity' => $data['quantity'],
+                'price' => $data['price'],
+            ]]);
             DB::commit();
             return $this->successResponse($order, 'Order updated successfully');
         } catch (Exception $e) {
