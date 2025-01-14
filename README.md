@@ -18,7 +18,7 @@ This is a Laravel 11 project that includes API endpoints for managing products, 
 
 1. **Clone the repository:**
    ```bash
-   git clone <repository-url>
+   git clone https://github.com/AhmedWeb2022/PaySkyTask.git
    cd <project-folder>
    ```
 
