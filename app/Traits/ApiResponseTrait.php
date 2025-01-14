@@ -69,7 +69,7 @@ trait ApiResponseTrait
      * @param  int  $statusCode
      * @return \Illuminate\Http\JsonResponse
      */
-    public function noContent($message = 'No content available', $statusCode = 204): JsonResponse
+    public function successMessage($message = 'No content available', $statusCode = 200): JsonResponse
     {
         return response()->json([
             'status' => true,

@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
             $table->foreignId('order_id')->constrained('orders')->cascadeOnDelete();
             $table->foreignId('product_id')->constrained('products')->cascadeOnDelete();
-            $table->double('amount');
+            $table->double('ammount');
             $table->unsignedTinyInteger('status')->comment('0: pending, 1: successful, 2: failed')->default(0);
             $table->timestamps();
             $table->softDeletes();

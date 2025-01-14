@@ -40,8 +40,10 @@ class TransactionService
 
     public function create(array $data)
     {
-        $data['total_amount'] = calculateTotalAmount($data);
+        // dd($data);
+        $data['user_id'] = auth('api')->user()->id;
         $transactionParam = $this->transactionParam->setParams($data);
+        // dd($transactionParam->toArray());
         $response = $this->transactionRepository->create($transactionParam->toArray());
 
         if (!$response['status']) {
@@ -51,24 +53,14 @@ class TransactionService
         return $this->success(new TransactionResource($response['data']), $response['message']);
     }
 
-    public function update(int $id, array $data)
-    {
-        $data['total_amount'] = calculateTotalAmount($data);
+    public function updateStatus(array $data){
+        // dd($data);
         $transactionParam = $this->transactionParam->setParams($data);
-        $response = $this->transactionRepository->update($id, $transactionParam->toArray());
-
+        // dd($transactionParam->toArray());
+        $response = $this->transactionRepository->update($data['id'], $transactionParam->toArray());
         if (!$response['status']) {
             return $this->error($response['message']);
         }
-        return $this->success(new TransactionResource($response['data']), 'Order updated successfully');
-    }
-
-    public function delete(int $id)
-    {
-        $response = $this->transactionRepository->delete($id);
-        if (!$response['status']) {
-            return $this->error($response['message']);
-        }
-        return $this->noContent($response['message'])->getData();
+        return $this->success(new TransactionResource($response['data']), $response['message']);
     }
 }

@@ -1,67 +1,156 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
 
-## About Laravel
+# PaySky
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+This is a Laravel 11 project that includes API endpoints for managing products, orders, transactions, and user authentication. Below are the setup instructions, API documentation, and database schema details.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+---
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## Setup Instructions
 
-## Learning Laravel
+### Prerequisites
+- PHP 8.2 or higher
+- Composer
+- MySQL or any other supported database
+- Laravel 11
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+### Installation Steps
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+1. **Clone the repository:**
+   ```bash
+   git clone <repository-url>
+   cd <project-folder>
+   ```
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+2. **Install dependencies:**
+   ```bash
+   composer install
+   ```
 
-## Laravel Sponsors
+3. **Create a `.env` file:**
+   Copy the `.env.example` file to `.env` and update the database credentials:
+   ```bash
+   cp .env.example .env
+   ```
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+4. **Generate the application key:**
+   ```bash
+   php artisan key:generate
+   ```
 
-### Premium Partners
+5. **Run migrations:**
+   ```bash
+   php artisan migrate
+   ```
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+6. **Seed the database (optional):**
+   ```bash
+   php artisan db:seed
+   ```
 
-## Contributing
+7. **Start the development server:**
+   ```bash
+   php artisan serve
+   ```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+8. **Access the application:**
+   Open your browser and go to `http://127.0.0.1:8000`.
 
-## Code of Conduct
+---
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+## API Documentation
 
-## Security Vulnerabilities
+The API documentation is available on Postman. You can access it using the following links:
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+- **Postman Documentation:** [API Documentation](https://web.postman.co/workspace/ee33405a-8f34-412d-8451-a7bafe3348f7/documentation/39361869-497c47ae-a8f1-4bcf-a468-c7efce26b8d1)
+- **Postman Collection:** [API Collection](https://web.postman.co/workspace/ee33405a-8f34-412d-8451-a7bafe3348f7/collection/39361869-497c47ae-a8f1-4bcf-a468-c7efce26b8d1?action=share&source=copy-link&creator=39361869)
 
-## License
+### API Endpoints
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
-"# PaySkyTask" 
+#### Authentication
+- **Register:** `POST /register`
+- **Login:** `POST /login`
+- **Logout:** `POST /logout`
+
+#### Products
+- **Fetch all products:** `GET /products`
+- **Show a product:** `GET /products/{id}`
+- **Add a product:** `POST /products`
+- **Update a product:** `PUT /products/{id}`
+- **Delete a product:** `DELETE /products/{id}`
+
+#### Orders
+- **Fetch all orders:** `GET /orders`
+- **Fetch order details:** `GET /orders/{id}`
+- **Add an order:** `POST /orders`
+- **Update an order:** `PUT /orders/{id}`
+- **Delete an order:** `DELETE /orders/{id}`
+
+#### Transactions
+- **Create a transaction:** `POST /transaction`
+- **Update transaction status:** `POST /transaction_update_status`
+
+---
+
+## Database Schema
+
+### Tables and Relationships
+
+1. **Users Table**
+   - `id`: Primary key
+   - `name`: User's name
+   - `email`: User's email (unique)
+   - `password`: User's password
+   - `email_verified_at`: Timestamp for email verification
+   - `remember_token`: Token for "remember me" functionality
+   - `timestamps`: Created at and updated at timestamps
+
+2. **Personal Access Tokens Table**
+   - `id`: Primary key
+   - `tokenable_id`: Polymorphic relation ID
+   - `tokenable_type`: Polymorphic relation type
+   - `name`: Token name
+   - `token`: Unique token string
+   - `abilities`: Token abilities (nullable)
+   - `last_used_at`: Timestamp for last usage
+   - `expires_at`: Token expiration timestamp
+   - `timestamps`: Created at and updated at timestamps
+
+3. **Products Table**
+   - `id`: Primary key
+   - `name`: Product name
+   - `price`: Product price
+   - `timestamps`: Created at and updated at timestamps
+   - `softDeletes`: Soft delete functionality
+
+4. **Orders Table**
+   - `id`: Primary key
+   - `total_amount`: Total amount of the order
+   - `status`: Order status (0: pending, 1: successful, 2: failed)
+   - `timestamps`: Created at and updated at timestamps
+   - `softDeletes`: Soft delete functionality
+
+5. **Order Products Table**
+   - `id`: Primary key
+   - `order_id`: Foreign key referencing `orders.id`
+   - `product_id`: Foreign key referencing `products.id`
+   - `quantity`: Quantity of the product in the order
+   - `price`: Price of the product in the order
+   - `timestamps`: Created at and updated at timestamps
+   - `softDeletes`: Soft delete functionality
+
+6. **Transactions Table**
+   - `id`: Primary key
+   - `user_id`: Foreign key referencing `users.id`
+   - `order_id`: Foreign key referencing `orders.id`
+   - `product_id`: Foreign key referencing `products.id`
+   - `ammount`: Transaction amount
+   - `status`: Transaction status (0: pending, 1: successful, 2: failed)
+   - `timestamps`: Created at and updated at timestamps
+   - `softDeletes`: Soft delete functionality
+
+### Entity-Relationship Diagram (ERD)
+You can view the ERD diagram for this project on DrawSQL:  
+[PaySky ERD Diagram](https://drawsql.app/teams/backend-110/diagrams/paysky)
+
+---

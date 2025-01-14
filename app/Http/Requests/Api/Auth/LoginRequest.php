@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Http\Requests\Api\Product;
+namespace App\Http\Requests\Api\Auth;
 
 use App\Response\ApiRequest;
 use Illuminate\Foundation\Http\FormRequest;
 
-class UpdateProductRequest extends ApiRequest
+class LoginRequest extends ApiRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -23,10 +23,8 @@ class UpdateProductRequest extends ApiRequest
     public function rules(): array
     {
         return [
-            'name' => 'required|string',
-            'price' => 'required|numeric',
+            'email' => 'required|string|email|max:255',
+            'password' => 'required|string|min:8',
         ];
     }
-
-
 }

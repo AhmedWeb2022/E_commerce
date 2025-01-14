@@ -70,10 +70,12 @@ class TransactionRepository implements RepositoryInterface
         DB::beginTransaction();
 
         try {
+            // dd($data);
             $transaction = $this->transaction->create($data);
             DB::commit();
             return $this->successResponse($transaction, 'transaction created successfully');
         } catch (Exception $e) {
+            dd($e->getMessage());
             DB::rollBack();
             Log::error('Error creating transaction: ' . $e->getMessage());
             return $this->errorResponse('Unable to create transaction');
@@ -104,6 +106,7 @@ class TransactionRepository implements RepositoryInterface
             DB::commit();
             return $this->successResponse($transaction, 'transaction updated successfully');
         } catch (Exception $e) {
+            dd($e->getMessage());
             DB::rollBack();
             Log::error('Error updating transaction: ' . $e->getMessage());
             return $this->errorResponse('Unable to update transaction');

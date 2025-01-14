@@ -20,8 +20,9 @@ class OrderResource extends JsonResource
             'id' => $this->id,
             'total_amount' => $this->total_amount ?? '',
             'status' => $this->status,
-            'products' => ProductResource::collection($this->products),
-            'order_products' => OrderProductResource::collection($this->orderProducts),
+            'products' => $this->products->map(function ($product) {
+                return new ProductResource($product, $this->id);
+            }),
         ];
     }
 }

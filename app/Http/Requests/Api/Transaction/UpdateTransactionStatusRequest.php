@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Http\Requests\Api\Product;
+namespace App\Http\Requests\Api\Transaction;
 
 use App\Response\ApiRequest;
 use Illuminate\Foundation\Http\FormRequest;
 
-class UpdateProductRequest extends ApiRequest
+class UpdateTransactionStatusRequest extends ApiRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -23,10 +23,8 @@ class UpdateProductRequest extends ApiRequest
     public function rules(): array
     {
         return [
-            'name' => 'required|string',
-            'price' => 'required|numeric',
+            'id' => 'required|exists:transactions,id',
+            'status' => 'required|in:1,2',
         ];
     }
-
-
 }

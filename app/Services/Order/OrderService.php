@@ -41,35 +41,22 @@ class OrderService
 
     public function create(array $data)
     {
-        $data['total_amount'] = calculateTotalAmount($data);
+        $data['total_amount'] = calculateTotalAmount($data['orders']);
         $orderParam = $this->orderParam->setParams($data);
         $response = $this->orderRepository->create($orderParam->toArray());
+        $order_products = [];
+        foreach ($data['orders'] as $product) {
+            $order_products[$product['product_id']] = [
+                'quantity' => $product['quantity'],
+                'price' => $product['price'],
+            ];
+        }
+        $response['data']->products()->attach($order_products);
 
         if (!$response['status']) {
             return $this->error($response['message']);
         }
 
         return $this->success(new OrderResource($response['data']), $response['message']);
-    }
-
-    public function update(int $id, array $data)
-    {
-        $data['total_amount'] = calculateTotalAmount($data);
-        $orderParam = $this->orderParam->setParams($data);
-        $response = $this->orderRepository->update($id, $orderParam->toArray());
-
-        if (!$response['status']) {
-            return $this->error($response['message']);
-        }
-        return $this->success(new OrderResource($response['data']), 'Order updated successfully');
-    }
-
-    public function delete(int $id)
-    {
-        $response = $this->orderRepository->delete($id);
-        if (!$response['status']) {
-            return $this->error($response['message']);
-        }
-        return $this->noContent($response['message'])->getData();
     }
 }

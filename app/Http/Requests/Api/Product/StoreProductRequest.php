@@ -29,13 +29,4 @@ class StoreProductRequest extends ApiRequest
     }
 
 
-    public function messages()
-    {
-        return [
-            'name.required' => 'Name is required',
-            'name.string' => 'Name must be a string',
-            'price.required' => 'Price is required',
-            'price.numeric' => 'Price must be a number',
-        ];
-    }
 }
