@@ -47,7 +47,7 @@ class ProductService
             return $this->error($response['message']);
         }
 
-        return $this->success(new ProductResource($response['data']), $response['message']);
+        return $this->success(new ProductResource($response['data']), $response['message'], 201);
     }
 
     public function update(int $id, array $data)

@@ -42,8 +42,12 @@ class OrderService
     public function create(array $data)
     {
         $data['total_amount'] = calculateTotalAmount($data['orders']);
+        // dd($data);
+        $data['user_id'] = auth('api')->user()->id;
         $orderParam = $this->orderParam->setParams($data);
+
         $response = $this->orderRepository->create($orderParam->toArray());
+        // dd($response);
         $order_products = [];
         foreach ($data['orders'] as $product) {
             $order_products[$product['product_id']] = [

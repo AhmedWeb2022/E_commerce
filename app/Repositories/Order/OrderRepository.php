@@ -69,6 +69,7 @@ class OrderRepository implements RepositoryInterface
         DB::beginTransaction();
 
         try {
+            // dd($data);
             $order = $this->order->create($data);
             DB::commit();
             return $this->successResponse($order, 'Order created successfully');
